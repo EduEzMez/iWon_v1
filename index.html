@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#0d1014">
+<title>iWon</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: calma, privada y segura; una libreta de bolsillo que se siente como ganar
+   IDEA: la tarjeta del mes, como una tarjeta bancaria lima con tu saldo
+   PICTURE: tarjeta del mes + dona de gastos arriba de todo en Inicio
+   COLOUR and TYPE: fondo gris pizarra, tarjeta celeste, coral para gastos; Manrope con números tabulares
+   LAYOUT: columna de celular con barra inferior; desde 900px, barra lateral y dos columnas */
+:root{color-scheme:light dark;
+--bg:light-dark(#eef1f4,#0d1014);--card:light-dark(#ffffff,#161b21);--card2:light-dark(#f4f6f8,#1d232b);
+--ink:light-dark(#141a21,#e9eef3);--mute:light-dark(#5f6b77,#98a3ae);--line:light-dark(#dde3e9,#28303a);
+--lime:#8fd3f4;--limeink:#0f1c26;--pos:light-dark(#1d6fa5,#8fd3f4);--neg:light-dark(#c63f2a,#ff7a63);--warn:light-dark(#9a6b00,#f2c14e);
+--r:20px;--sh:0 1px 2px rgba(0,0,0,.05),0 10px 28px -14px rgba(0,0,0,.25)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Manrope,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:clip;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}button:disabled{opacity:.4;cursor:default}
+:focus-visible{outline:3px solid var(--pos);outline-offset:2px}
+[hidden]{display:none!important}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+small{font-weight:500;color:var(--mute);font-size:13px}
+h1{font-size:clamp(28px,7vw,40px);line-height:1.05;letter-spacing:-.03em;margin:10px 0 16px;text-wrap:balance}
+.sub{color:var(--mute);font-size:15px;margin:0 0 12px}
+.note{font-size:13px;color:var(--mute);margin:12px 0 0}
+.err{color:var(--neg);font-size:14px;min-height:1.3em;margin:0 0 10px}
+
+/* lock */
+.lock{min-height:100dvh;display:grid;place-items:center;padding:max(28px,env(safe-area-inset-top)) 20px 28px;background:radial-gradient(110% 70% at 50% -10%,color-mix(in srgb,var(--lime) 38%,transparent),transparent 62%),var(--bg)}
+.lockbox{width:min(420px,100%)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:28px;letter-spacing:-.03em}
+.mark{width:44px;height:44px;border-radius:14px;background:var(--lime);color:var(--limeink);display:grid;place-items:center;flex:none}
+.mark svg{width:26px;height:26px;stroke-width:3}
+.lockfoot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;margin-top:10px}
+.link{background:none;border:0;color:var(--mute);text-decoration:underline;font-size:14px;min-height:44px;padding:0 2px}
+.warnbox{border-radius:14px;padding:12px 14px;background:color-mix(in srgb,var(--warn) 16%,transparent);font-size:14px;margin:0 0 14px}
+
+/* form */
+.field{display:grid;gap:6px;margin:0 0 14px}
+.field>span{font-size:14px;font-weight:700;color:var(--mute)}
+.in{width:100%;min-height:48px;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:16px;appearance:none}
+select.in{background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),linear-gradient(135deg,var(--mute) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 15px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:36px}
+.in:focus{border-color:var(--pos);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--pos) 22%,transparent)}
+.money{font-size:34px;font-weight:800;letter-spacing:-.03em;min-height:66px}
+.pw{position:relative}.pw .in{padding-right:52px}.pw .ib{position:absolute;right:2px;top:2px;border:0;background:none}
+.meter{height:6px;border-radius:9px;background:var(--line);overflow:hidden;margin-top:6px}.meter i{display:block;height:100%;width:0;transition:width .2s,background .2s}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0 10px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.range{width:100%;accent-color:var(--pos);min-height:36px}
+.btn{min-height:48px;padding:12px 18px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn.pri{background:var(--lime);color:var(--limeink);border-color:transparent}
+.btn.dark{background:var(--limeink);color:var(--lime);border-color:transparent}
+.btn.ghost{background:rgba(15,28,38,.08);border-color:transparent;color:var(--limeink)}
+.btn.danger{color:var(--neg)}
+.btn.dangerf{background:var(--neg);color:#fff;border-color:transparent}
+.btn.block{width:100%}
+.btn.sm{min-height:40px;padding:8px 14px;font-size:14px;border-radius:12px}
+
+/* shell */
+.app{min-height:100dvh;padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+.top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top)) 16px 10px;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.top .brand{font-size:22px;margin-inline-end:auto}.top .mark{width:36px;height:36px;border-radius:12px}.top .mark svg{width:22px;height:22px}
+.ib{width:44px;height:44px;border-radius:14px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center;color:var(--ink);flex:none}
+.ib svg{width:21px;height:21px}
+main{padding:2px 16px 24px;max-width:1180px;margin:0 auto}
+.nav{position:fixed;inset:auto 0 0 0;z-index:30;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+.nav a{display:grid;justify-items:center;gap:2px;padding:6px 0;color:var(--mute);text-decoration:none;font-size:13px;font-weight:700;min-height:48px}
+.nav a svg{width:22px;height:22px}
+.nav a[aria-current=page]{color:var(--ink)}.nav a[aria-current=page] svg{color:var(--pos)}
+.nav .dsk{display:none}
+.fab{justify-self:center;width:60px;height:60px;border-radius:20px;border:0;background:var(--lime);color:var(--limeink);display:grid;place-items:center;transform:translateY(-14px);box-shadow:0 12px 26px -10px rgba(40,120,170,.75)}
+.fab svg{width:28px;height:28px;stroke-width:2.6}.fab span{display:none}
+.grid>div{display:grid;gap:0}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin:0 0 14px;box-shadow:var(--sh)}
+.card h2{font-size:18px;margin:0 0 12px;letter-spacing:-.01em;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h2 .act{margin-inline-start:auto}
+.hero{background:var(--lime);color:var(--limeink);border:0;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-70px;top:-70px;width:220px;height:220px;border-radius:50%;border:30px solid rgba(15,28,38,.07);pointer-events:none}
+.hero .lbl{font-size:14px;font-weight:700;opacity:.72}
+.hero .big{font-size:clamp(36px,11vw,54px);font-weight:800;letter-spacing:-.045em;line-height:1.05;margin:4px 0 16px}
+.hero .duo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hero .pill{background:rgba(15,28,38,.08);border-radius:14px;padding:10px 12px}
+.hero .pill b{display:block;font-size:18px;letter-spacing:-.02em}
+.hero .sr{display:flex;justify-content:space-between;font-size:14px;font-weight:700;margin-top:14px}
+.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:inherit;background:var(--pos);transition:width .3s}
+.hero .bar{background:rgba(15,28,38,.12);margin-top:6px}.hero .bar i{background:var(--limeink)}
+.month{display:flex;align-items:center;gap:8px;margin:6px 0 14px}
+.month b{flex:1;text-align:center;font-size:17px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}
+.stat{background:var(--card2);border-radius:14px;padding:12px}
+.stat span{font-size:13px;color:var(--mute);font-weight:700}
+.stat b{display:block;font-size:20px;letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis}
+
+/* lists */
+.tx{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px 2px;border:0;border-bottom:1px solid var(--line);background:none;text-align:start;width:100%;min-height:58px}
+.tx:last-child{border-bottom:0}
+.dot{width:12px;height:12px;border-radius:4px;display:inline-block;flex:none}
+.tx .t,.tx .s{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tx .t{font-weight:700}.tx .s{font-size:13px;color:var(--mute)}
+.amt{font-weight:800;text-align:end}.amt.neg{color:var(--neg)}.amt.pos{color:var(--pos)}
+.amt small{display:block;font-weight:600}
+.day{font-size:13px;font-weight:800;color:var(--mute);margin:16px 0 0;text-transform:capitalize}
+.day:first-child{margin-top:0}
+.tag{font-style:normal;font-size:13px;font-weight:800;background:var(--lime);color:var(--limeink);padding:1px 8px;border-radius:99px;margin-inline-start:6px}
+.empty{text-align:center;padding:18px 6px;color:var(--mute)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips.rows{display:grid;grid-auto-flow:column;grid-template-rows:repeat(3,auto);justify-content:start;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.chip{min-height:42px;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.chip .dot{width:10px;height:10px;border-radius:3px}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);background:var(--card2);border:1px solid var(--line);border-radius:16px;padding:4px;gap:4px;margin-bottom:16px}
+.seg button{min-height:42px;border:0;border-radius:12px;background:none;font-weight:800;font-size:14px;color:var(--mute);padding:4px 6px}
+.seg button[aria-pressed=true]{background:var(--card);color:var(--ink);box-shadow:var(--sh)}
+
+/* charts */
+.donut{display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:center}
+.donut svg{width:150px;height:150px}
+.leg{display:grid;gap:12px}
+.lg{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:4px 10px;align-items:center;font-size:14px}
+.lg>span:nth-child(2){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lg .bar{grid-column:2/4;height:6px}
+.fig{position:relative;height:210px;margin-top:12px}.fig>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.lgd{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--mute);margin-top:10px}
+.lgd i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:6px;vertical-align:-1px}
+.goal,.cmp,.cut{padding:12px 0;border-bottom:1px solid var(--line)}
+.goal:last-child,.cmp:last-child,.cut:last-child{border-bottom:0}
+.gh,.ch,.cs{display:flex;justify-content:space-between;gap:4px 10px;flex-wrap:wrap;align-items:baseline}
+.gh{margin-bottom:8px}
+.gs,.cs{font-size:13px;color:var(--mute);margin-top:6px}
+.cmp .bar{height:6px;margin-top:8px}
+.rec{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.rec li{padding:12px 14px;border-radius:14px;background:var(--card2);font-size:15px}
+.rec li b{display:block;margin-bottom:2px}
+.rates{margin-top:12px;border-top:1px solid var(--line);padding-top:4px}
+.rates summary{cursor:pointer;font-weight:800;min-height:44px;display:flex;align-items:center;font-size:14px}
+
+/* sheet */
+.scrim{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+.sheet{width:min(620px,100%);max-height:92dvh;overflow:auto;overscroll-behavior:contain;background:var(--bg);border-radius:26px 26px 0 0;padding:10px 18px calc(20px + env(safe-area-inset-bottom));animation:up .28s cubic-bezier(.2,.8,.2,1)}
+.grab{width:44px;height:5px;border-radius:9px;background:var(--line);margin:0 auto 14px}
+.sheet h3{font-size:24px;margin:0 0 14px;letter-spacing:-.02em}
+.items{display:grid;gap:8px}
+.it{display:grid;grid-template-columns:minmax(0,1fr) 62px 98px 36px;gap:6px;align-items:center}
+.it .in{min-height:46px;padding:10px}
+.it.ih{font-size:13px;color:var(--mute);font-weight:700}
+.x{width:36px;height:46px;border:0;background:none;color:var(--mute);display:grid;place-items:center}.x svg{width:18px;height:18px}
+.tot{display:flex;justify-content:space-between;align-items:baseline;padding:14px 0 0;border-top:1px dashed var(--line);margin-top:12px;font-weight:800;font-size:20px}
+textarea.in{min-height:110px;font-size:13px;font-family:ui-monospace,monospace;word-break:break-all}
+.toast{position:fixed;left:50%;bottom:calc(104px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:12px 16px;border-radius:14px;font-weight:700;font-size:14px;z-index:70;max-width:calc(100% - 32px);box-shadow:var(--sh)}
+@keyframes up{from{transform:translateY(40px);opacity:0}}@keyframes fade{from{opacity:0}}
+
+@media(max-width:380px){.donut{grid-template-columns:1fr}.donut svg{justify-self:center}.it{grid-template-columns:minmax(0,1fr) 52px 86px 32px}}
+@media(min-width:700px){.scrim{align-items:center;padding:20px}.sheet{border-radius:26px}.toast{bottom:28px}}
+@media(min-width:900px){
+.app{padding-bottom:0;padding-left:250px}
+.nav{inset:0 auto 0 0;width:250px;display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:22px 14px;border-top:0;border-right:1px solid var(--line)}
+.nav a{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;font-size:15px}
+.nav a[aria-current=page]{background:var(--card2)}
+.nav .dsk{display:flex}
+.fab{order:-1;width:100%;height:54px;border-radius:16px;transform:none;display:flex;gap:8px;font-weight:800;font-size:15px;margin-bottom:14px;box-shadow:none}
+.fab svg{width:22px;height:22px}.fab span{display:inline}
+.top{padding-left:32px;padding-right:32px}
+main{padding:4px 32px 48px}
+.grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start}
+.top .hideon{display:none}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<section class="lock" id="lock">
+  <div class="lockbox">
+    <div class="brand" style="margin-bottom:22px"><span class="mark"><i data-ic="logo"></i></span>iWon</div>
+    <div id="lockBody"></div>
+  </div>
+</section>
+
+<div class="app" id="app" hidden>
+  <header class="top">
+    <div class="brand"><span class="mark"><i data-ic="logo"></i></span>iWon</div>
+    <button class="ib" data-act="hide" id="hideBtn" aria-label="Ocultar o mostrar montos"></button>
+    <a class="ib hideon" href="#ajustes" aria-label="Ajustes"><i data-ic="gear"></i></a>
+    <button class="ib" data-act="lockNow" aria-label="Bloquear"><i data-ic="lock"></i></button>
+  </header>
+  <main id="view"></main>
+  <nav class="nav" aria-label="Secciones">
+    <a href="#inicio" data-v="inicio"><i data-ic="home"></i><span>Inicio</span></a>
+    <a href="#registro" data-v="registro"><i data-ic="list"></i><span>Registro</span></a>
+    <button class="fab" data-act="add" aria-label="Nuevo movimiento"><i data-ic="plus"></i><span>Nuevo movimiento</span></button>
+    <a href="#ahorro" data-v="ahorro"><i data-ic="jar"></i><span>Ahorro</span></a>
+    <a href="#invertir" data-v="invertir"><i data-ic="trend"></i><span>Invertir</span></a>
+    <a href="#ajustes" data-v="ajustes" class="dsk"><i data-ic="gear"></i><span>Ajustes</span></a>
+  </nav>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+{
+'use strict';
+/* ---------- utilidades ---------- */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const P={
+ logo:'M4 12.5l5 5L20 6.5',
+ home:'M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z',
+ list:'M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01',
+ plus:'M12 5v14M5 12h14',
+ jar:'M8 3h8v3H8zM7 6h10a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zM12 11v6M9.5 14h5',
+ trend:'M3 17l6-6 4 4 8-8M15 7h6v6',
+ gear:'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z',
+ lock:'M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4',
+ eye:'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
+ eyeoff:'M17.9 17.9A10.8 10.8 0 0 1 12 20c-7 0-11-8-11-8a19.8 19.8 0 0 1 5.1-5.9M9.9 4.2A10 10 0 0 1 12 4c7 0 11 8 11 8a19.9 19.9 0 0 1-2.2 3.2M1 1l22 22',
+ cl:'M15 18l-6-6 6-6',cr:'M9 18l6-6-6-6',x:'M18 6 6 18M6 6l12 12'
+};
+const ic=n=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${P[n]}"/></svg>`;
+const te=new TextEncoder(),td=new TextDecoder();
+const VKEY='iwon.vault.v1',GKEY='iwon.guard.v1',ITER=600000,AAD=te.encode('iWon/v1');
+const sget=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const sset=(k,v)=>{try{localStorage.setItem(k,v);return true}catch(e){return false}};
+const sdel=k=>{try{localStorage.removeItem(k)}catch(e){}};
+const b64=buf=>{const u=new Uint8Array(buf);let s='';for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s)};
+const ub64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+const canCrypto=!!(window.crypto&&crypto.subtle&&window.isSecureContext!==false);
+const uid=()=>[...crypto.getRandomValues(new Uint8Array(9))].map(b=>b.toString(16).padStart(2,'0')).join('');
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+
+const today=()=>new Date().toLocaleDateString('sv');
+const mk=d=>d.slice(0,7);
+const addM=(m,n)=>{const[y,mo]=m.split('-').map(Number);const d=new Date(y,mo-1+n,1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
+const mLabel=m=>{const[y,mo]=m.split('-').map(Number);const t=new Date(y,mo-1,1).toLocaleDateString('es-AR',{month:'long',year:'numeric'}).replace(' de ',' ');return t[0].toUpperCase()+t.slice(1)};
+const dLabel=d=>{const[y,m,dd]=d.split('-').map(Number);return new Date(y,m-1,dd).toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'})};
+const dShort=d=>{if(!d)return '';const[y,m,dd]=d.split('-').map(Number);return new Date(y,m-1,dd).toLocaleDateString('es-AR',{day:'numeric',month:'short',year:'numeric'})};
+const daysBetween=(a,b)=>Math.round((new Date(b+'T12:00')-new Date(a+'T12:00'))/864e5);
+const NF0=new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',maximumFractionDigits:0});
+const NF2=new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',minimumFractionDigits:2,maximumFractionDigits:2});
+const money=(n,d)=>S&&S.set.hide?'$ ••••••':(d?NF2:NF0).format(n||0);
+const pctp=x=>(x*100).toFixed(1).replace('.',',')+'%';
+const pct=x=>(Math.abs(x)<5e-4?'':x>0?'+':'−')+(Math.abs(x)*100).toFixed(1).replace('.',',')+'%';
+const fmtIn=n=>n===''||n==null?'':String(n).replace('.',',');
+function num(v){if(typeof v==='number')return isFinite(v)?v:0;let s=String(v||'').replace(/[^\d.,-]/g,'');if(!s)return 0;if(s.includes(','))s=s.replace(/\./g,'').replace(',','.');else if((s.match(/\./g)||[]).length>1||/\.\d{3}$/.test(s))s=s.replace(/\./g,'');const n=parseFloat(s);return isFinite(n)?n:0}
+
+/* ---------- catálogos ---------- */
+const CATS=[['super','Supermercado','#5bb8e8'],['mayorista','Mayorista','#2f9e8f'],['comida','Comida y delivery','#f29e4c'],['transporte','Transporte y nafta','#4c8bf5'],['servicios','Servicios','#a06cd5'],['hogar','Alquiler y hogar','#d9a441'],['salud','Salud','#e5566c'],['educacion','Educación','#3fb6d9'],['hijos','Hijos','#f27fb5'],['ocio','Ocio','#9bd34a'],['ropa','Ropa','#c48b5c'],['tecno','Tecnología','#6f7dd9'],['trabajo','Insumos de trabajo','#e0773a'],['impuestos','Impuestos','#8a8f85'],['otros','Otros','#9aa392']].map(([id,label,color])=>({id,label,color}));
+const INC=[['sueldo','Sueldo','#5bb8e8'],['extra','Trabajo extra','#2f9e8f'],['ventas','Ventas','#4c8bf5'],['rinde','Rendimientos','#d9a441'],['otros','Otros','#9aa392']].map(([id,label,color])=>({id,label,color}));
+const INVT=[['billetera','Cuenta remunerada',1],['fci','FCI',1],['pf','Plazo fijo',1],['caucion','Caución',1],['bonos','Bonos / ONs',2],['dolar','Dólares',2],['cedear','CEDEARs',3],['acciones','Acciones',3],['cripto','Cripto',3],['otro','Otro',2]].map(([id,label,risk])=>({id,label,risk}));
+const RISKC=['','#5bb8e8','#d9a441','#e5566c'];
+const METHODS=['Efectivo','Débito','Crédito','Transferencia','Billetera virtual'];
+const LIQ=['billetera','fci','caucion'];
+const catOf=id=>CATS.find(c=>c.id===id)||CATS[CATS.length-1];
+const incOf=id=>INC.find(c=>c.id===id)||INC[INC.length-1];
+const invOf=id=>INVT.find(c=>c.id===id)||INVT[INVT.length-1];
+const OPTS=[{k:'billetera',name:'Cuenta remunerada',kind:'diaria',liq:'Disponible siempre'},{k:'fci',name:'FCI money market',kind:'diaria',liq:'Disponible siempre'},{k:'pf',name:'Plazo fijo',kind:'mensual',liq:'Al vencimiento'},{k:'caucion',name:'Caución',kind:'mensual',liq:'Al plazo'},{k:'dolar',name:'Dólar MEP',kind:'dev',liq:'Disponible siempre'},{k:'nada',name:'Dejarla quieta',kind:'none',liq:'Pierde contra la inflación'}];
+const ALLOC={conservador:[40,40,20,0],moderado:[25,30,25,20],agresivo:[15,15,25,45]};
+const ALLOCN=['Liquidez (cuenta remunerada / FCI)','Plazo fijo / caución','Dólares','CEDEARs / acciones'];
+
+/* ---------- estado y cifrado ---------- */
+let KEY=null,SALT=null,KITER=ITER,S=null,view='inicio',month='',txFilter='todos',txQuery='',saveT,idleT,projRO,last=Date.now(),hiddenAt=0;
+const fresh=user=>({v:1,user,created:Date.now(),tx:[],goals:[],inv:[],set:{lock:5,risk:'moderado',infl:2,hide:false,rates:{billetera:24,fci:20,pf:25,caucion:22,dolar:1},ratesDate:'2026-11-20',proj:{monthly:null,cut:0,inst:'billetera'},cmp:{amount:1000000,days:30}}});
+function migrate(s){const d=fresh(s.user||'');s.tx=Array.isArray(s.tx)?s.tx:[];s.goals=Array.isArray(s.goals)?s.goals:[];s.inv=Array.isArray(s.inv)?s.inv:[];s.set={...d.set,...(s.set||{})};s.set.rates={...d.set.rates,...(s.set.rates||{})};s.set.proj={...d.set.proj,...(s.set.proj||{})};s.set.cmp={...d.set.cmp,...(s.set.cmp||{})};s.tx.forEach(t=>{t.amount=num(t.amount);t.id=String(t.id||uid())});return s}
+async function derive(user,pass,salt,iter){const base=await crypto.subtle.importKey('raw',te.encode(user.trim().toLowerCase()+'\u0000'+pass),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function seal(){const iv=crypto.getRandomValues(new Uint8Array(12));const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv,additionalData:AAD},KEY,te.encode(JSON.stringify(S)));return JSON.stringify({app:'iWon',v:1,kdf:'PBKDF2-SHA256',iter:KITER,salt:b64(SALT),iv:b64(iv),ct:b64(ct)})}
+async function openVault(str,user,pass){const v=JSON.parse(str);if(!v||v.app!=='iWon'||!v.ct)throw new Error('formato');const salt=ub64(v.salt);const key=await derive(user,pass,salt,v.iter);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:ub64(v.iv),additionalData:AAD},key,ub64(v.ct));return{key,salt,iter:v.iter,state:JSON.parse(td.decode(pt))}}
+async function persist(){if(!KEY||!S)return;try{const out=await seal();if(!sset(VKEY,out))toast('Este navegador no pudo guardar. Hacé una copia de seguridad.')}catch(e){toast('Error al cifrar los datos')}}
+function save(){clearTimeout(saveT);saveT=setTimeout(persist,300)}
+const guard=()=>{try{return JSON.parse(sget(GKEY))||{f:0,u:0}}catch(e){return{f:0,u:0}}};
+
+/* ---------- UI base ---------- */
+let tT;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tT);tT=setTimeout(()=>t.hidden=true,3000)}
+function sheet(html,mount){closeSheet();const sc=document.createElement('div');sc.className='scrim';sc.id='scrim';sc.innerHTML=`<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;sc.addEventListener('click',e=>{if(e.target===sc)closeSheet()});document.body.appendChild(sc);document.body.style.overflow='hidden';if(mount)mount(sc.firstElementChild);const f=sc.querySelector('[autofocus]');if(f&&matchMedia('(min-width:700px)').matches)setTimeout(()=>f.focus(),60)}
+function closeSheet(){const s=$('#scrim');if(s)s.remove();document.body.style.overflow=''}
+function askConfirm({title,msg,ok='Confirmar',danger=false,typed=''}){return new Promise(res=>{sheet(`<h3>${esc(title)}</h3><p class="sub">${esc(msg)}</p>${typed?`<label class="field"><span>Escribí ${esc(typed)} para confirmar</span><input class="in" id="cfT" autocomplete="off" autocapitalize="characters"></label>`:''}<div class="row2"><button class="btn" data-x>Cancelar</button><button class="btn ${danger?'dangerf':'pri'}" data-ok>${esc(ok)}</button></div>`,el=>{el.querySelector('[data-x]').onclick=()=>{closeSheet();res(false)};el.querySelector('[data-ok]').onclick=()=>{if(typed&&el.querySelector('#cfT').value.trim().toUpperCase()!==typed){toast('El texto no coincide');return}closeSheet();res(true)}})})}
+function strength(p,u){let s=0;if(p.length>=8)s++;if(p.length>=12)s++;if(p.length>=16)s++;if(/[a-z]/.test(p)&&/[A-Z]/.test(p))s++;if(/\d/.test(p))s++;if(/[^A-Za-z0-9]/.test(p))s++;if(/^(1234|qwer|pass|contra|admin)/i.test(p)||(u&&p.toLowerCase().includes(u.toLowerCase())))s=Math.min(s,1);return s}
+function meter(inp,box,user){const upd=()=>{const s=strength(inp.value,user?user():'');const i=box.querySelector('i'),l=box.nextElementSibling;const L=['Muy débil','Débil','Débil','Aceptable','Buena','Muy buena','Excelente'];i.style.width=(s/6*100)+'%';i.style.background=s<3?'var(--neg)':s<4?'var(--warn)':'var(--pos)';l.textContent=inp.value?L[s]:'Mínimo 8 caracteres. Mejor si combina letras, números y símbolos.'};inp.addEventListener('input',upd);upd()}
+const pwField=(name,label,ac,extra='')=>`<label class="field"><span>${label}</span><div class="pw"><input class="in" name="${name}" type="password" autocomplete="${ac}" required ${extra}><button type="button" class="ib" data-peek aria-label="Mostrar u ocultar contraseña">${ic('eye')}</button></div></label>`;
+document.addEventListener('click',e=>{const b=e.target.closest('[data-peek]');if(!b)return;const i=b.parentElement.querySelector('input');i.type=i.type==='password'?'text':'password';b.innerHTML=ic(i.type==='password'?'eye':'eyeoff')});
+
+/* ---------- pantalla de bloqueo ---------- */
+function showLock(){
+ $('#app').hidden=true;$('#lock').hidden=false;
+ const has=!!sget(VKEY);const warn=!canCrypto?'<div class="warnbox">Abrí iWon desde una dirección https para poder cifrar tus datos.</div>':(window.__noStore?'<div class="warnbox">Este navegador no permite guardar datos acá. Lo que cargues se pierde al cerrar: usá la copia de seguridad.</div>':'');
+ $('#lockBody').innerHTML=warn+(has?`<h1>Hola de nuevo</h1><p class="sub">Tus datos están cifrados en este dispositivo y solo se abren con tu usuario y contraseña.</p>
+ <form id="fL" autocomplete="on"><label class="field"><span>Usuario</span><input class="in" name="u" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>${pwField('p','Contraseña','current-password')}<p class="err" id="lErr" role="alert"></p><button class="btn pri block" id="lBtn">Entrar</button></form>
+ <div class="lockfoot"><button class="link" data-act="importOpen">Restaurar una copia</button><button class="link" data-act="forgot">Olvidé la contraseña</button></div>`
+ :`<h1>Creá tu bóveda</h1><p class="sub">iWon guarda todo cifrado en este dispositivo. Sin tu contraseña nadie puede leerlo, ni siquiera vos: anotala en un lugar seguro.</p>
+ <form id="fS" autocomplete="on"><label class="field"><span>Usuario</span><input class="in" name="u" autocomplete="username" autocapitalize="none" spellcheck="false" minlength="3" maxlength="40" required></label>${pwField('p','Contraseña','new-password')}<div class="meter" style="margin:-8px 0 4px"><i></i></div><p class="note" style="margin:0 0 14px"></p>${pwField('p2','Repetí la contraseña','new-password')}<p class="err" id="lErr" role="alert"></p><button class="btn pri block" id="lBtn">Crear y entrar</button></form>
+ <div class="lockfoot"><button class="link" data-act="importOpen">Ya tengo una copia de seguridad</button></div>`);
+ const fL=$('#fL'),fS=$('#fS'),err=m=>$('#lErr').textContent=m,btn=$('#lBtn');
+ if(fS)meter(fS.elements.p,$('.meter',fS),()=>fS.elements.u.value);
+ if(fL)fL.onsubmit=async e=>{e.preventDefault();if(!canCrypto)return;const g=guard();if(g.u>Date.now())return err(`Demasiados intentos. Esperá ${Math.ceil((g.u-Date.now())/1000)} segundos.`);
+  const u=fL.elements.u.value,p=fL.elements.p.value;if(!u||!p)return err('Completá usuario y contraseña.');btn.disabled=true;btn.textContent='Verificando…';
+  try{const r=await openVault(sget(VKEY),u,p);KEY=r.key;SALT=r.salt;KITER=r.iter;S=migrate(r.state);sdel(GKEY);fL.reset();enterApp()}
+  catch(x){g.f=(g.f||0)+1;if(g.f>=5)g.u=Date.now()+Math.min(30000*2**(g.f-5),900000);sset(GKEY,JSON.stringify(g));fL.elements.p.value='';err(g.f>=5?'Datos incorrectos. Por seguridad, esperá antes de reintentar.':`Usuario o contraseña incorrectos. Intentos: ${g.f} de 5.`);btn.disabled=false;btn.textContent='Entrar'}};
+ if(fS)fS.onsubmit=async e=>{e.preventDefault();if(!canCrypto)return;const u=fS.elements.u.value.trim(),p=fS.elements.p.value,p2=fS.elements.p2.value;
+  if(u.length<3)return err('El usuario debe tener al menos 3 caracteres.');if(p.length<8)return err('La contraseña debe tener al menos 8 caracteres.');if(strength(p,u)<3)return err('La contraseña es muy débil. Sumale largo, números o símbolos.');if(p!==p2)return err('Las contraseñas no coinciden.');
+  btn.disabled=true;btn.textContent='Cifrando…';SALT=crypto.getRandomValues(new Uint8Array(16));KITER=ITER;KEY=await derive(u,p,SALT,ITER);S=fresh(u);await persist();fS.reset();enterApp();toast('Bóveda creada. Hacé una copia de seguridad desde Ajustes.')};
+}
+function enterApp(){$('#lock').hidden=true;$('#lockBody').innerHTML='';$('#app').hidden=false;month=mk(today());last=Date.now();startIdle();const h=location.hash.slice(1);view=VIEWS[h]?h:'inicio';render(true)}
+function startIdle(){clearInterval(idleT);idleT=setInterval(()=>{if(KEY&&S&&Date.now()-last>S.set.lock*60000)lock('Se bloqueó por inactividad')},10000)}
+async function lock(msg){clearInterval(idleT);clearTimeout(saveT);if(KEY)await persist();KEY=null;S=null;SALT=null;closeSheet();if(projRO)projRO.disconnect();$('#view').innerHTML='';showLock();if(msg)toast(msg)}
+['pointerdown','keydown','touchstart','wheel'].forEach(ev=>addEventListener(ev,()=>last=Date.now(),{passive:true}));
+document.addEventListener('visibilitychange',()=>{if(document.hidden){hiddenAt=Date.now();if(KEY){clearTimeout(saveT);persist()}}else if(KEY&&hiddenAt&&Date.now()-hiddenAt>60000)lock('Se bloqueó al salir de la app')});
+addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+
+/* ---------- datos ---------- */
+const txM=m=>S.tx.filter(t=>t.date.slice(0,7)===m);
+const sumK=(a,k)=>a.filter(t=>t.kind===k).reduce((s,t)=>s+t.amount,0);
+const byDate=(x,y)=>y.date.localeCompare(x.date)||(y.created||0)-(x.created||0);
+const projects=()=>[...new Set(S.tx.map(t=>t.proj).filter(Boolean))].sort();
+function avg3(){const cur=mk(today());const all=[...new Set(S.tx.map(t=>t.date.slice(0,7)))].filter(m=>m<=cur).sort();let ms=all.filter(m=>m<cur).slice(-3);if(!ms.length)ms=all.slice(-1);if(!ms.length)return{inc:0,exp:0,sav:0,n:0,byCat:{},cur:false};let inc=0,exp=0;const byCat={};ms.forEach(m=>{const a=txM(m);inc+=sumK(a,'ingreso');a.filter(t=>t.kind==='gasto').forEach(t=>{exp+=t.amount;byCat[t.cat]=(byCat[t.cat]||0)+t.amount})});const n=ms.length;for(const k in byCat)byCat[k]/=n;return{inc:inc/n,exp:exp/n,sav:(inc-exp)/n,n,byCat,cur:ms[0]===cur}}
+function mRate(k){if(k==='nada')return 0;const R=S.set.rates;if(k==='dolar')return R.dolar/100;const r=(R[k]||0)/100;return OPTS.find(o=>o.k===k).kind==='diaria'?(1+r/365)**30.42-1:r*30/365}
+function projCalc(){const A=avg3(),p=S.set.proj,m=Math.max(0,num(p.monthly)+A.exp*p.cut/100),r=mRate(p.inst),i=S.set.infl/100,nom=[0],real=[0];for(let k=1;k<=12;k++){nom[k]=nom[k-1]*(1+r)+m;real[k]=nom[k]/(1+i)**k}return{A,m,nom,real,int:nom[12]-m*12}}
+const liquid=()=>S.inv.filter(v=>LIQ.includes(v.type)).reduce((s,v)=>s+num(v.current),0);
+function invStats(v){const days=Math.max(1,daysBetween(v.start,today()));const inv=num(v.invested)||1,cur=num(v.current),r=cur/inv;return{...v,days,gain:cur-num(v.invested),tot:r-1,ok:days>=15,tea:r**(365/days)-1,real:r/(1+S.set.infl/100)**(days/30)-1}}
+
+/* ---------- router ---------- */
+const VIEWS={inicio:renderHome,registro:renderTx,ahorro:renderSave,invertir:renderInv,ajustes:renderSet};
+addEventListener('hashchange',()=>{if(!KEY)return;const h=location.hash.slice(1);if(VIEWS[h]&&h!==view){view=h;render(true)}});
+function render(top){if(!S)return;$$('.nav a').forEach(a=>a.setAttribute('aria-current',a.dataset.v===view?'page':'false'));$('#hideBtn').innerHTML=ic(S.set.hide?'eyeoff':'eye');if(projRO){projRO.disconnect();projRO=null}$('#view').innerHTML=VIEWS[view]();const after=AFTER[view];if(after)after();if(top)scrollTo(0,0)}
+const AFTER={registro:bindTx,ahorro:bindSave,invertir:bindInv};
+const monthNav=()=>`<div class="month"><button class="ib" data-act="mPrev" aria-label="Mes anterior">${ic('cl')}</button><b>${esc(mLabel(month))}</b><button class="ib" data-act="mNext" aria-label="Mes siguiente" ${month>=mk(today())?'disabled':''}>${ic('cr')}</button></div>`;
+
+function txRow(t){const g=t.kind==='gasto';const c=g?catOf(t.cat):incOf(t.src);const title=g&&t.mode==='detalle'?(t.store||'Compra detallada'):(t.note||c.label);const sub=[title!==c.label?c.label:'',g&&t.mode==='detalle'?`${(t.items||[]).length} productos`:'',t.method,t.proj].filter(Boolean).join(' · ')||dShort(t.date);
+ return `<button class="tx" data-act="editTx" data-id="${esc(t.id)}"><span class="dot" style="background:${c.color}"></span><span><span class="t">${esc(title)}</span><span class="s">${esc(sub)}</span></span><span class="amt num ${g?'neg':'pos'}">${g?'−':'+'}${money(t.amount)}</span></button>`}
+function donut(parts,total){const R=60,C=2*Math.PI*R;let off=0,s='';parts.forEach(p=>{const len=total?p.v/total*C:0;const gap=parts.length>1?2:0;s+=`<circle r="${R}" cx="80" cy="80" fill="none" stroke="${p.color}" stroke-width="22" stroke-dasharray="${Math.max(len-gap,0.01)} ${C}" stroke-dashoffset="${-off}" transform="rotate(-90 80 80)"/>`;off+=len});return `<svg viewBox="0 0 160 160" role="img" aria-label="Gastos por categoría">${s}<text x="80" y="76" text-anchor="middle" style="fill:var(--mute);font-size:12px;font-weight:700">Gastaste</text><text x="80" y="96" text-anchor="middle" style="fill:var(--ink);font-size:15px;font-weight:800">${esc(money(total))}</text></svg>`}
+
+/* ---------- Inicio ---------- */
+function renderHome(){
+ if(!S.tx.length&&!S.inv.length)return `<h1>Empecemos a ordenar tu plata</h1><section class="card hero"><div class="lbl">Tu primer paso</div><div class="big" style="font-size:clamp(26px,7vw,36px);margin-bottom:10px">Cargá lo que entra y lo que sale.</div><p style="margin:0 0 16px;font-weight:600">Tu sueldo, los trabajos extra, los gastos del día y las compras grandes del mayorista, producto por producto. iWon te muestra cuánto te queda y cuánto podés juntar.</p><div class="chips"><button class="btn dark" data-act="addInc">Cargar ingreso</button><button class="btn ghost" data-act="add">Cargar gasto</button></div></section><section class="card"><h2>¿Querés verla funcionando primero?</h2><p class="sub">Cargamos tres meses de ejemplo. Los quitás con un toque desde Ajustes.</p><button class="btn block" data-act="sample">Probar con datos de ejemplo</button></section>`;
+ const a=txM(month),inc=sumK(a,'ingreso'),exp=sumK(a,'gasto'),bal=inc-exp,rate=inc>0?bal/inc:0,pexp=sumK(txM(addM(month,-1)),'gasto');
+ const by={};a.filter(t=>t.kind==='gasto').forEach(t=>by[t.cat]=(by[t.cat]||0)+t.amount);
+ const cats=Object.entries(by).sort((x,y)=>y[1]-x[1]);const top=cats.slice(0,5).map(([k,v])=>({...catOf(k),v}));const rest=cats.slice(5).reduce((s,x)=>s+x[1],0);if(rest)top.push({label:'Otras',color:'#9aa392',v:rest});
+ const cmp=pexp>0?`${exp>=pexp?'Subió':'Bajó'} ${pctp(Math.abs(exp-pexp)/pexp)} contra el mes anterior`:'Sin datos del mes anterior para comparar';
+ const pj={};a.filter(t=>t.proj).forEach(t=>{pj[t.proj]=pj[t.proj]||{i:0,e:0};pj[t.proj][t.kind==='gasto'?'e':'i']+=t.amount});
+ const recent=[...a].sort(byDate).slice(0,6);
+ return monthNav()+`<div class="grid"><div>
+ <section class="card hero"><div class="lbl">${bal>=0?'Te queda este mes':'Gastaste de más este mes'}</div><div class="big num">${money(bal)}</div>
+ <div class="duo"><div class="pill"><span class="lbl">Ingresos</span><b class="num">${money(inc)}</b></div><div class="pill"><span class="lbl">Gastos</span><b class="num">${money(exp)}</b></div></div>
+ <div class="sr"><span>Ahorro del mes</span><span class="num">${inc?pctp(Math.max(rate,0))+' de lo que entró':'—'}</span></div><div class="bar"><i style="width:${clamp(rate*100,0,100)}%"></i></div></section>
+ <section class="card"><h2>En qué se fue la plata</h2><p class="sub">${esc(cmp)}</p>${exp?`<div class="donut">${donut(top,exp)}<div class="leg">${top.map(c=>`<div class="lg"><span class="dot" style="background:${c.color}"></span><span>${esc(c.label)}</span><span class="num">${money(c.v)}</span><div class="bar"><i style="width:${c.v/top[0].v*100}%;background:${c.color}"></i></div></div>`).join('')}</div></div>`:'<p class="empty">Todavía no hay gastos este mes.</p>'}</section>
+ </div><div>
+ ${Object.keys(pj).length?`<section class="card"><h2>Por trabajo o proyecto</h2>${Object.entries(pj).sort((x,y)=>(y[1].i-y[1].e)-(x[1].i-x[1].e)).map(([k,v])=>`<div class="cut"><div class="ch"><b>${esc(k)}</b><span class="num ${v.i-v.e>=0?'pos':'neg'}">${v.i-v.e>=0?'+':'−'}${money(Math.abs(v.i-v.e))}</span></div><div class="cs"><span>Entró ${money(v.i)}</span><span>Salió ${money(v.e)}</span></div></div>`).join('')}</section>`:''}
+ <section class="card"><h2>Últimos movimientos <a class="btn sm act" href="#registro">Ver todo</a></h2>${recent.length?`<div>${recent.map(txRow).join('')}</div>`:'<p class="empty">No hay movimientos este mes.</p>'}</section>
+ </div></div>`}
+
+/* ---------- Registro ---------- */
+function renderTx(){return monthNav()+`<section class="card"><input class="in" id="txQ" type="search" placeholder="Buscar nota, comercio, producto o proyecto" value="${esc(txQuery)}" autocomplete="off" aria-label="Buscar"><div class="chips" style="margin-top:10px">${[['todos','Todo'],['gasto','Gastos'],['ingreso','Ingresos'],['detalle','Compras detalladas']].map(([v,l])=>`<button class="chip" data-act="filter" data-v="${v}" aria-pressed="${txFilter===v}">${l}</button>`).join('')}</div></section><section class="card" id="txList">${txListHTML()}</section>`}
+function txListHTML(){const q=txQuery.trim().toLowerCase();let a=txM(month);if(txFilter==='gasto'||txFilter==='ingreso')a=a.filter(t=>t.kind===txFilter);if(txFilter==='detalle')a=a.filter(t=>t.mode==='detalle');
+ if(q)a=a.filter(t=>[t.note,t.store,t.proj,t.method,t.kind==='gasto'?catOf(t.cat).label:incOf(t.src).label,...(t.items||[]).map(i=>i.n)].join(' ').toLowerCase().includes(q));
+ if(!a.length)return `<p class="empty">${q?'No encontramos nada con esa búsqueda.':'Sin movimientos en este mes.'}</p><button class="btn block" data-act="add">Cargar un movimiento</button>`;
+ a.sort(byDate);const ex=sumK(a,'gasto'),inc=sumK(a,'ingreso');let html=`<p class="sub">${a.length} movimientos · <span class="neg">−${money(ex)}</span> · <span class="pos">+${money(inc)}</span></p>`,d='';
+ a.forEach(t=>{if(t.date!==d){d=t.date;html+=`<div class="day">${esc(dLabel(d))}</div>`}html+=txRow(t)});return html}
+function bindTx(){const q=$('#txQ');if(q)q.oninput=()=>{txQuery=q.value;$('#txList').innerHTML=txListHTML()}}
+
+/* ---------- alta / edición de movimientos ---------- */
+function openTx(o={}){
+ let d;
+ if(o.id){const t=S.tx.find(x=>x.id===o.id);if(!t)return;d=JSON.parse(JSON.stringify(t))}
+ else d={kind:o.kind||'gasto',mode:o.mode||'rapido',date:month===mk(today())?today():month+'-01',amount:'',cat:'super',src:'sueldo',method:'Débito',store:'',proj:'',note:''};
+ if(!d.items||!d.items.length)d.items=[{n:'',q:1,p:''}];
+ const editing=!!o.id;
+ sheet('<div id="txBox"></div>',el=>{
+  const box=el.querySelector('#txBox');
+  const tot=()=>d.items.reduce((s,i)=>s+(num(i.q)||0)*num(i.p),0);
+  const collect=()=>{const f=box.querySelector('form');if(!f)return;['amount','date','method','store','proj','note'].forEach(k=>{if(f.elements[k])d[k]=f.elements[k].value});const rows=$$('.it[data-r]',box);if(rows.length)d.items=rows.map(r=>({n:$('[data-f=n]',r).value,q:$('[data-f=q]',r).value,p:$('[data-f=p]',r).value}))};
+  const chips=(name,list,val,label,rows)=>`<div class="field"><span>${label}</span><div class="chips${rows?' rows':''}" data-pick="${name}">${list.map(c=>`<button type="button" class="chip" data-v="${c.id}" aria-pressed="${c.id===val}"><span class="dot" style="background:${c.color}"></span>${c.label}</button>`).join('')}</div></div>`;
+  const itemRow=i=>`<div class="it" data-r><input class="in" data-f="n" maxlength="60" placeholder="Producto" value="${esc(i.n)}" aria-label="Producto"><input class="in num" data-f="q" inputmode="decimal" value="${esc(fmtIn(i.q))}" aria-label="Cantidad"><input class="in num" data-f="p" inputmode="decimal" placeholder="$" value="${esc(fmtIn(i.p))}" aria-label="Precio unitario"><button type="button" class="x" data-del aria-label="Quitar producto">${ic('x')}</button></div>`;
+  const draw=()=>{const isD=d.kind==='gasto'&&d.mode==='detalle',isI=d.kind==='ingreso';
+   box.innerHTML=`<h3>${editing?'Editar movimiento':'Nuevo movimiento'}</h3>
+   <div class="seg" role="group" aria-label="Tipo">${[['gasto.rapido','Gasto'],['gasto.detalle','Compra detallada'],['ingreso.rapido','Ingreso']].map(([k,l])=>`<button type="button" data-mode="${k}" aria-pressed="${k===d.kind+'.'+d.mode}">${l}</button>`).join('')}</div>
+   <form novalidate autocomplete="off">
+   ${isD?`<label class="field"><span>Comercio</span><input class="in" name="store" maxlength="60" value="${esc(d.store)}" placeholder="Ej: Maxiconsumo, Vital, Diarco"></label>
+   <div class="field"><span>Productos</span><div class="it ih"><span>Producto</span><span>Cant.</span><span>Precio u.</span><span></span></div><div class="items" id="items">${d.items.map(itemRow).join('')}</div><button type="button" class="btn sm" id="addIt" style="margin-top:4px">+ Agregar producto</button><div class="tot"><span>Total</span><span class="num" id="itTot">${money(tot(),1)}</span></div></div>`
+   :`<label class="field"><span>Monto</span><input class="in money num" name="amount" inputmode="decimal" placeholder="$ 0" value="${esc(fmtIn(d.amount))}" autofocus></label>`}
+   ${isI?chips('src',INC,d.src,'¿De dónde viene?'):chips('cat',CATS,d.cat,'Categoría',true)}
+   <div class="two"><label class="field"><span>Fecha</span><input class="in" type="date" name="date" value="${esc(d.date)}" max="${today()}"></label>${isI?'':`<label class="field"><span>Medio de pago</span><select class="in" name="method">${METHODS.map(m=>`<option ${m===d.method?'selected':''}>${m}</option>`).join('')}</select></label>`}</div>
+   <label class="field"><span>Trabajo o proyecto <small>(opcional)</small></span><input class="in" name="proj" list="projList" maxlength="40" value="${esc(d.proj)}" placeholder="Ej: trabajo principal, changas, ventas"><datalist id="projList">${projects().map(p=>`<option value="${esc(p)}">`).join('')}</datalist></label>
+   <label class="field"><span>Nota <small>(opcional)</small></span><input class="in" name="note" maxlength="80" value="${esc(d.note)}" placeholder="${isI?'Ej: Sueldo de noviembre':'Ej: Café y medialunas'}"></label>
+   <p class="err" id="txErr" role="alert"></p>
+   <button class="btn pri block">${editing?'Guardar cambios':'Guardar'}</button>
+   ${editing?'<button type="button" class="btn block danger" data-deltx style="margin-top:10px">Eliminar movimiento</button>':''}</form>`;
+   bind()};
+  const addRow=()=>{collect();d.items.push({n:'',q:1,p:''});draw();const r=$$('.it[data-r]',box);$('[data-f=n]',r[r.length-1]).focus()};
+  const bind=()=>{
+   $$('[data-mode]',box).forEach(b=>b.onclick=()=>{collect();const[k,m]=b.dataset.mode.split('.');d.kind=k;d.mode=m;if(m==='detalle'&&d.cat==='super')d.cat='mayorista';if(m==='detalle'&&!d.store)d.store='Mayorista';draw()});
+   $$('[data-pick]',box).forEach(g=>g.onclick=e=>{const c=e.target.closest('.chip');if(!c)return;d[g.dataset.pick]=c.dataset.v;$$('.chip',g).forEach(x=>x.setAttribute('aria-pressed',x===c))});
+   const items=$('#items',box);
+   if(items){items.oninput=()=>{collect();$('#itTot',box).textContent=money(tot(),1)};
+    items.onclick=e=>{const x=e.target.closest('[data-del]');if(!x)return;collect();const i=$$('.it[data-r]',items).indexOf(x.closest('.it'));d.items.splice(i,1);if(!d.items.length)d.items.push({n:'',q:1,p:''});draw()};
+    items.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();if(e.target.dataset.f==='p')addRow();else{const n=e.target.nextElementSibling;if(n&&n.tagName==='INPUT')n.focus()}}};
+    $('#addIt',box).onclick=addRow}
+   $('form',box).onsubmit=e=>{e.preventDefault();collect();saveTx()};
+   const del=$('[data-deltx]',box);if(del)del.onclick=async()=>{if(await askConfirm({title:'¿Eliminar este movimiento?',msg:'No se puede deshacer.',ok:'Eliminar',danger:true})){S.tx=S.tx.filter(x=>x.id!==d.id);save();render();toast('Movimiento eliminado')}}};
+  const saveTx=()=>{const err=m=>{$('#txErr',box).textContent=m};
+   if(!/^\d{4}-\d{2}-\d{2}$/.test(d.date))return err('Elegí una fecha.');
+   let amount,items;
+   if(d.kind==='gasto'&&d.mode==='detalle'){items=d.items.map(i=>({n:String(i.n).trim().slice(0,60)||'Producto',q:num(i.q)||1,p:num(i.p)})).filter(i=>i.p>0);if(!items.length)return err('Cargá al menos un producto con su precio.');amount=items.reduce((s,i)=>s+i.q*i.p,0)}
+   else{amount=num(d.amount);if(!(amount>0))return err('Ingresá un monto mayor a cero.')}
+   const t={id:d.id||uid(),kind:d.kind,mode:d.kind==='ingreso'?'rapido':d.mode,date:d.date,amount:Math.round(amount*100)/100,proj:String(d.proj||'').trim().slice(0,40),note:String(d.note||'').trim().slice(0,80),created:d.created||Date.now()};
+   if(t.kind==='gasto'){t.cat=d.cat;t.method=d.method;if(t.mode==='detalle'){t.store=String(d.store||'').trim().slice(0,60)||'Compra';t.items=items}}else t.src=d.src;
+   const i=S.tx.findIndex(x=>x.id===t.id);if(i>=0)S.tx[i]=t;else S.tx.push(t);
+   save();closeSheet();month=mk(t.date);render();toast(editing?'Cambios guardados':'Movimiento guardado')};
+  draw()})}
+
+/* ---------- Ahorro ---------- */
+function renderSave(){
+ const c=projCalc(),A=c.A,p=S.set.proj,liq=liquid(),t3=A.exp*3,t6=A.exp*6;
+ if(p.monthly==null)p.monthly=Math.max(Math.round(A.sav),0);
+ const cuts=Object.entries(A.byCat).sort((x,y)=>y[1]-x[1]).slice(0,3);
+ return `<h1>Ahorro y proyección</h1><div class="grid"><div>
+ <section class="card"><h2>Tu ritmo</h2>${A.n?`<div class="stats"><div class="stat"><span>Entra por mes</span><b class="num">${money(A.inc)}</b></div><div class="stat"><span>Sale por mes</span><b class="num">${money(A.exp)}</b></div><div class="stat"><span>Te queda</span><b class="num ${A.sav>=0?'pos':'neg'}">${money(A.sav)}</b></div><div class="stat"><span>Tasa de ahorro</span><b class="num">${A.inc?pctp(A.sav/A.inc):'—'}</b></div></div><p class="note">Promedio de ${A.n===1?'1 mes':A.n+' meses'}${A.cur?' (el mes en curso, todavía incompleto)':' completos'}.</p>`:'<p class="empty">Cargá ingresos y gastos para ver tu ritmo.</p>'}</section>
+ <section class="card"><h2>Proyección a 12 meses</h2>
+ <div class="two"><label class="field"><span>Ahorro por mes</span><input class="in num" id="pjM" inputmode="decimal" value="${esc(fmtIn(p.monthly))}"></label><label class="field"><span>Lo pongo en</span><select class="in" id="pjI">${[['nada','No lo invierto'],['billetera','Cuenta remunerada'],['fci','FCI money market'],['pf','Plazo fijo'],['caucion','Caución']].map(([k,l])=>`<option value="${k}" ${p.inst===k?'selected':''}>${l}${k!=='nada'?' · '+S.set.rates[k]+'% TNA':''}</option>`).join('')}</select></label></div>
+ <label class="field"><span>Además recorto mis gastos un <b id="pjCv">${p.cut}%</b> <small id="pjCx"></small></span><input type="range" class="range" id="pjC" min="0" max="30" step="1" value="${p.cut}"></label>
+ <div class="stats"><div class="stat"><span>En 12 meses juntás</span><b class="num" id="pjN"></b></div><div class="stat"><span>En plata de hoy</span><b class="num" id="pjR"></b></div><div class="stat"><span>Intereses ganados</span><b class="num pos" id="pjG"></b></div></div>
+ <div class="fig"><svg id="pjSvg" role="img" aria-label="Proyección de ahorro a 12 meses"></svg></div>
+ <div class="lgd"><span><i style="background:var(--pos)"></i>Ahorro acumulado</span><span><i style="background:var(--mute)"></i>Descontando ${String(S.set.infl).replace('.',',')}% de inflación mensual</span></div></section>
+ </div><div>
+ <section class="card"><h2>Fondo de emergencia</h2>${A.exp?`<p class="sub">Lo ideal: entre 3 y 6 meses de gastos (${money(t3)} a ${money(t6)}) en algo líquido.</p><div class="gh"><b>Tenés ${money(liq)}</b><span class="num">${pctp(Math.min(liq/t3,1))} de 3 meses</span></div><div class="bar"><i style="width:${clamp(liq/t3*100,0,100)}%"></i></div><p class="gs">${liq>=t3?'Cubierto. Lo que ahorres de más ya puede ir a inversiones de mayor plazo.':c.m>0?`Ahorrando ${money(c.m)} por mes lo completás en ${Math.ceil((t3-liq)/c.m)} meses.`:'Definí un ahorro mensual para estimar cuándo lo completás.'}</p><p class="note">Cuenta lo que cargaste en Invertir como cuenta remunerada, FCI o caución.</p>`:'<p class="empty">Cargá gastos para calcularlo.</p>'}</section>
+ <section class="card"><h2>Metas <button class="btn sm act" data-act="goalNew">+ Nueva meta</button></h2>${S.goals.length?S.goals.map(g=>{const pc=g.target?clamp(g.saved/g.target*100,0,100):0,left=g.target-g.saved;let info;if(left<=0)info='Meta cumplida.';else if(g.date){const ml=Math.max(1,Math.ceil(daysBetween(today(),g.date)/30.4));info=`Necesitás ${money(left/ml)} por mes para llegar al ${dShort(g.date)}.`}else info=c.m>0?`A tu ritmo de ahorro llegás en unos ${Math.ceil(left/c.m)} meses.`:'Definí un ahorro mensual para estimar.';
+  return `<div class="goal"><div class="gh"><b>${esc(g.name)}</b><span class="num">${money(g.saved)} de ${money(g.target)}</span></div><div class="bar"><i style="width:${pc}%"></i></div><p class="gs">${esc(info)}</p><div class="chips" style="margin-top:8px"><button class="btn sm" data-act="goalAdd" data-id="${esc(g.id)}">Sumar ahorro</button><button class="btn sm" data-act="goalEdit" data-id="${esc(g.id)}">Editar</button></div></div>`}).join(''):'<p class="empty">Ponele nombre y monto a lo que querés lograr: vacaciones, una moto, una herramienta.</p>'}</section>
+ <section class="card"><h2>Dónde recortar</h2>${cuts.length?cuts.map(([k,v])=>`<div class="cut"><div class="ch"><b>${esc(catOf(k).label)}</b><span class="num">${money(v)} / mes</span></div><div class="cs"><span>Si bajás un 10%</span><span class="num pos">+${money(v*.1)} / mes · ${money(v*1.2)} / año</span></div></div>`).join(''):'<p class="empty">Todavía no hay gastos para analizar.</p>'}</section>
+ </div></div>`}
+function bindSave(){const svg=$('#pjSvg');if(!svg)return;const p=S.set.proj;
+ const upd=()=>{const c=projCalc();$('#pjN').textContent=money(c.nom[12]);$('#pjR').textContent=money(c.real[12]);$('#pjG').textContent=money(c.int);$('#pjCv').textContent=p.cut+'%';$('#pjCx').textContent=p.cut&&c.A.exp?`(+${money(c.A.exp*p.cut/100)} por mes)`:'';
+  const [y,m]=today().split('-').map(Number);const labels=c.nom.map((_,k)=>k?new Date(y,m-1+k,1).toLocaleDateString('es-AR',{month:'short'}).replace('.',''):'hoy');
+  drawLine(svg,[{v:c.nom,col:'var(--pos)',fill:1},{v:c.real,col:'var(--mute)',dash:1}],labels)};
+ $('#pjM').oninput=e=>{p.monthly=num(e.target.value);upd();save()};
+ $('#pjI').onchange=e=>{p.inst=e.target.value;upd();save()};
+ $('#pjC').oninput=e=>{p.cut=+e.target.value;upd();save()};
+ projRO=new ResizeObserver(upd);projRO.observe(svg)}
+function drawLine(svg,sets,labels){const W=svg.clientWidth,H=svg.clientHeight;if(!W||!H)return;const L=4,R=6,T=20,B=24,n=sets[0].v.length,max=Math.max(1,...sets.flatMap(s=>s.v));const x=i=>L+i*(W-L-R)/(n-1),y=v=>T+(H-T-B)*(1-v/max);let g='';
+ [0,.5,1].forEach(f=>{g+=`<line x1="${L}" x2="${W-R}" y1="${y(max*f)}" y2="${y(max*f)}" style="stroke:var(--line)"/>`});
+ g+=`<text x="${L}" y="12" style="fill:var(--mute);font-size:12px;font-weight:700">${esc(money(max))}</text>`;
+ sets.forEach(s=>{const pts=s.v.map((v,i)=>x(i).toFixed(1)+','+y(v).toFixed(1));if(s.fill)g+=`<path d="M${pts.join('L')}L${x(n-1)},${y(0)}L${x(0)},${y(0)}Z" style="fill:${s.col};opacity:.13"/>`;g+=`<polyline points="${pts.join(' ')}" fill="none" style="stroke:${s.col};stroke-width:2.5;stroke-linejoin:round;${s.dash?'stroke-dasharray:5 5':''}"/>`});
+ const step=W<520?3:1;labels.forEach((l,i)=>{if(i%step===0||i===n-1)g+=`<text x="${x(i)}" y="${H-5}" text-anchor="${i===0?'start':i===n-1?'end':'middle'}" style="fill:var(--mute);font-size:12px">${esc(l)}</text>`});svg.innerHTML=g}
+function openGoal(id){const g=id?{...S.goals.find(x=>x.id===id)}:{name:'',target:'',saved:0,date:''};
+ sheet(`<h3>${id?'Editar meta':'Nueva meta'}</h3><form autocomplete="off"><label class="field"><span>¿Para qué ahorrás?</span><input class="in" name="name" maxlength="40" value="${esc(g.name)}" placeholder="Ej: Vacaciones, moto, herramienta" autofocus></label><div class="two"><label class="field"><span>Monto objetivo</span><input class="in num" name="target" inputmode="decimal" value="${esc(fmtIn(g.target))}"></label><label class="field"><span>Ya tengo</span><input class="in num" name="saved" inputmode="decimal" value="${esc(fmtIn(g.saved||0))}"></label></div><label class="field"><span>Fecha objetivo <small>(opcional)</small></span><input class="in" type="date" name="date" value="${esc(g.date||'')}" min="${today()}"></label><p class="err" id="gErr"></p><button class="btn pri block">Guardar meta</button>${id?'<button type="button" class="btn block danger" data-del style="margin-top:10px">Eliminar meta</button>':''}</form>`,el=>{
+  const f=$('form',el);f.onsubmit=e=>{e.preventDefault();const o={id:id||uid(),name:f.elements.name.value.trim().slice(0,40),target:num(f.elements.target.value),saved:num(f.elements.saved.value),date:f.elements.date.value};if(!o.name)return $('#gErr',el).textContent='Ponele un nombre.';if(!(o.target>0))return $('#gErr',el).textContent='Ingresá un monto objetivo.';const i=S.goals.findIndex(x=>x.id===o.id);if(i>=0)S.goals[i]=o;else S.goals.push(o);save();closeSheet();render();toast('Meta guardada')};
+  const d=$('[data-del]',el);if(d)d.onclick=async()=>{if(await askConfirm({title:'¿Eliminar la meta?',msg:g.name,ok:'Eliminar',danger:true})){S.goals=S.goals.filter(x=>x.id!==id);save();render()}}})}
+function goalAdd(id){const g=S.goals.find(x=>x.id===id);if(!g)return;sheet(`<h3>Sumar a «${esc(g.name)}»</h3><form autocomplete="off"><label class="field"><span>Monto</span><input class="in money num" name="a" inputmode="decimal" placeholder="$ 0" autofocus></label><button class="btn pri block">Sumar</button></form>`,el=>{const f=$('form',el);f.onsubmit=e=>{e.preventDefault();const a=num(f.elements.a.value);if(!a)return;g.saved=Math.round((num(g.saved)+a)*100)/100;save();closeSheet();render();toast(g.saved>=g.target?'¡Meta cumplida!':'Ahorro sumado')}})}
+
+/* ---------- Invertir ---------- */
+function cmpRows(){const c=S.set.cmp,A=num(c.amount),d=c.days,i=S.set.infl/100,R=S.set.rates;return OPTS.map(o=>{let f;if(o.kind==='diaria')f=A*(1+(R[o.k]/100)/365)**d;else if(o.kind==='mensual')f=A*(1+(R[o.k]/100)*30/365)**(d/30);else if(o.kind==='dev')f=A*(1+R.dolar/100)**(d/30);else f=A;return{...o,f,gain:f-A,real:A?f/A/(1+i)**(d/30)-1:0,lbl:o.kind==='dev'?`sube ${String(R.dolar).replace('.',',')}% por mes`:o.kind==='none'?'0%':`TNA ${String(R[o.k]).replace('.',',')}%`}}).sort((x,y)=>y.f-x.f)}
+function cmpHTML(){const rows=cmpRows(),best=Math.max(rows[0].gain,1);return rows.map((r,i)=>`<div class="cmp"><div class="ch"><b>${r.name}${i===0?'<em class="tag">Mejor opción</em>':''}</b><span class="num ${r.gain>0?'pos':''}">+${money(r.gain)}</span></div><div class="bar"><i style="width:${clamp(r.gain/best*100,0,100)}%;background:${i===0?'var(--pos)':'var(--mute)'}"></i></div><div class="cs"><span>${r.lbl} · ${r.liq}</span><span class="num ${r.real>=0?'pos':'neg'}">real ${pct(r.real)}</span></div></div>`).join('')}
+function recs(port){const A=avg3(),R=S.set.rates,inf=S.set.infl/100,out=[];const lk=R.billetera>=R.fci?'billetera':'fci',ln=lk==='billetera'?'una cuenta remunerada':'un FCI money market',liq=liquid();
+ if(A.exp>0&&liq<A.exp*3)out.push(['Primero, tu fondo de emergencia',`Te faltan ${money(A.exp*3-liq)} para cubrir 3 meses de gastos. Ponelos en ${ln} (TNA ${R[lk]}%): rinde todos los días y la sacás cuando quieras.`]);
+ const diff=R.pf-R[lk];out.push(diff>=2?['Plata que no vas a tocar en 30 días',`El plazo fijo paga ${diff.toFixed(1).replace('.',',')} puntos más que ${ln}. Conviene para el ahorro que ya tenés separado.`]:['Priorizá la liquidez',`Hoy ${ln} paga ${diff<0?'más':'casi lo mismo'} que el plazo fijo y te deja la plata disponible.`]);
+ const bm=Math.max(...['billetera','fci','pf','caucion'].map(mRate));
+ out.push(bm<inf?['Ojo con la inflación',`Con la inflación que cargaste (${String(S.set.infl).replace('.',',')}% mensual) ninguna opción en pesos le gana. Una parte en dólares o en bonos ajustados por CER cuida mejor tu poder de compra.`]:['Le estás ganando a la inflación',`La mejor opción en pesos rinde ${pctp(bm)} por mes contra ${String(S.set.infl).replace('.',',')}% de inflación: ${pctp((1+bm)/(1+inf)-1)} real por mes.`]);
+ if(R.dolar/100>bm)out.push(['El dólar rinde más que los pesos',`Si el dólar sube ${String(R.dolar).replace('.',',')}% por mes como cargaste, conviene tener parte del ahorro en dólares.`]);
+ const best=port.find(p=>p.ok);if(best)out.push(['Tu mejor inversión',`${best.name} rinde ${pctp(best.tea)} anual (TEA) desde que entraste.`]);
+ const worst=port.filter(p=>p.days>=30&&p.real<0).sort((a,b)=>a.real-b.real)[0];if(worst)out.push([`Revisá ${worst.name}`,`Va ${pctp(Math.abs(worst.real))} por debajo de la inflación desde que entraste.`]);
+ const tot=port.reduce((s,p)=>s+num(p.current),0),mx=port.reduce((m,p)=>num(p.current)>num(m.current||0)?p:m,{});if(port.length>1&&tot&&num(mx.current)/tot>.6)out.push(['Diversificá',`${mx.name} concentra ${pctp(num(mx.current)/tot)} de tu cartera. Repartir baja el riesgo.`]);
+ if(S.set.risk!=='conservador')out.push(['CEDEARs y acciones, a largo plazo','Usalos solo con plata que no vas a necesitar por más de un año: suben más, pero también caen.']);
+ return out}
+function renderInv(){const port=S.inv.map(invStats).sort((a,b)=>(b.ok-a.ok)||(b.tea-a.tea)),c=S.set.cmp,R=S.set.rates;
+ const ti=port.reduce((s,p)=>s+num(p.invested),0),tc=port.reduce((s,p)=>s+num(p.current),0);
+ const m=projCalc().m,al=ALLOC[S.set.risk];
+ return `<h1>Inversiones</h1><div class="grid"><div>
+ <section class="card"><h2>Mi cartera <button class="btn sm act" data-act="invNew">+ Agregar</button></h2>${port.length?`<div class="stats"><div class="stat"><span>Invertido</span><b class="num">${money(ti)}</b></div><div class="stat"><span>Vale hoy</span><b class="num">${money(tc)}</b></div><div class="stat"><span>Ganancia</span><b class="num ${tc>=ti?'pos':'neg'}">${pct(ti?tc/ti-1:0)}</b></div></div><div style="margin-top:8px">${port.map((p,i)=>`<button class="tx" data-act="invEdit" data-id="${esc(p.id)}"><span class="dot" style="background:${RISKC[invOf(p.type).risk]}"></span><span><span class="t">${esc(p.name)}${i===0&&p.ok?'<em class="tag">Rinde más</em>':''}</span><span class="s">${esc(invOf(p.type).label)} · ${p.days} días · ${p.ok?'TEA '+pctp(p.tea):'muy reciente'} · real ${pct(p.real)}</span></span><span class="amt num ${p.gain>=0?'pos':'neg'}">${pct(p.tot)}<small>${money(p.current)}</small></span></button>`).join('')}</div><p class="note">Ordenadas por rendimiento anualizado. Actualizá el valor de cada una de vez en cuando para que el ranking sea fiel.</p>`:'<p class="empty">Cargá lo que tenés invertido (plazo fijo, billetera, CEDEARs, cripto) y iWon calcula cuál rinde más.</p>'}</section>
+ <section class="card"><h2>¿Dónde rinde más hoy?</h2>
+ <div class="two"><label class="field"><span>Monto</span><input class="in num" id="cmA" inputmode="decimal" value="${esc(fmtIn(c.amount))}"></label><div class="field"><span>Plazo</span><div class="chips">${[30,90,180,365].map(d=>`<button class="chip" data-act="cmpDays" data-v="${d}" aria-pressed="${c.days===d}">${d===365?'1 año':d+' días'}</button>`).join('')}</div></div></div>
+ <div id="cmpOut">${cmpHTML()}</div>
+ <details class="rates"><summary>Tasas de referencia al ${esc(dShort(S.set.ratesDate))} · editar</summary><form id="fR" autocomplete="off"><div class="two">${[['billetera','Cuenta remunerada (TNA %)'],['fci','FCI money market (TNA %)'],['pf','Plazo fijo 30 días (TNA %)'],['caucion','Caución (TNA %)'],['dolar','Dólar: suba mensual esperada (%)']].map(([k,l])=>`<label class="field"><span>${l}</span><input class="in num" name="${k}" inputmode="decimal" value="${esc(fmtIn(R[k]))}"></label>`).join('')}<label class="field"><span>Inflación mensual esperada (%)</span><input class="in num" name="infl" inputmode="decimal" value="${esc(fmtIn(S.set.infl))}"></label><label class="field"><span>Fecha de estas tasas</span><input class="in" type="date" name="date" value="${esc(S.set.ratesDate)}"></label></div><button class="btn pri block">Guardar tasas</button></form></details>
+ <p class="note">Las tasas las cargás vos con los valores del día de tu banco o billetera; las que vienen de fábrica son solo una referencia. Plazo fijo y caución se calculan renovando cada 30 días.</p></section>
+ </div><div>
+ <section class="card"><h2>Recomendación para vos</h2><div class="seg" role="group" aria-label="Perfil de riesgo">${['conservador','moderado','agresivo'].map(r=>`<button data-act="risk" data-v="${r}" aria-pressed="${S.set.risk===r}">${r[0].toUpperCase()+r.slice(1)}</button>`).join('')}</div>
+ <ul class="rec">${recs(port).map(([t,x])=>`<li><b>${esc(t)}</b>${esc(x)}</li>`).join('')}</ul>
+ <h2 style="margin-top:20px">Cómo repartir lo que ahorrás</h2><p class="sub">${m>0?`Sobre ${money(m)} por mes, perfil ${S.set.risk}.`:`Perfil ${S.set.risk}. Cargá un ahorro mensual en Ahorro para ver los montos.`}</p>
+ <div class="leg">${ALLOCN.map((n,i)=>`<div class="lg"><span class="dot" style="background:${['#5bb8e8','#8a96a3','#d9a441','#e5566c'][i]}"></span><span>${n}</span><span class="num">${al[i]}%${m>0?' · '+money(m*al[i]/100):''}</span><div class="bar"><i style="width:${al[i]}%;background:${['#5bb8e8','#8a96a3','#d9a441','#e5566c'][i]}"></i></div></div>`).join('')}</div>
+ <p class="note">Es una guía hecha con reglas simples sobre los datos y tasas que cargaste, no asesoramiento financiero. Antes de invertir, revisá condiciones, comisiones y riesgos de cada producto.</p></section>
+ </div></div>`}
+function bindInv(){const a=$('#cmA');if(a)a.oninput=()=>{S.set.cmp.amount=num(a.value);$('#cmpOut').innerHTML=cmpHTML();save()};
+ const f=$('#fR');if(f)f.onsubmit=e=>{e.preventDefault();['billetera','fci','pf','caucion','dolar'].forEach(k=>S.set.rates[k]=clamp(num(f.elements[k].value),0,1000));S.set.infl=clamp(num(f.elements.infl.value),0,100);if(f.elements.date.value)S.set.ratesDate=f.elements.date.value;save();render();toast('Tasas actualizadas')}}
+function openInv(id){const v=id?{...S.inv.find(x=>x.id===id)}:{name:'',type:'billetera',start:today(),invested:'',current:'',note:''};
+ sheet(`<h3>${id?'Actualizar inversión':'Nueva inversión'}</h3><form autocomplete="off"><label class="field"><span>Nombre</span><input class="in" name="name" maxlength="40" value="${esc(v.name)}" placeholder="Ej: Plazo fijo Nación, CEDEAR SPY" autofocus></label>
+ <div class="field"><span>Tipo</span><div class="chips" data-pick>${INVT.map(t=>`<button type="button" class="chip" data-v="${t.id}" aria-pressed="${t.id===v.type}"><span class="dot" style="background:${RISKC[t.risk]}"></span>${t.label}</button>`).join('')}</div></div>
+ <div class="two"><label class="field"><span>Invertiste</span><input class="in num" name="invested" inputmode="decimal" value="${esc(fmtIn(v.invested))}"></label><label class="field"><span>Vale hoy</span><input class="in num" name="current" inputmode="decimal" value="${esc(fmtIn(v.current))}" placeholder="Igual si recién entrás"></label></div>
+ <label class="field"><span>Fecha en que invertiste</span><input class="in" type="date" name="start" value="${esc(v.start)}" max="${today()}"></label>
+ <p class="note" style="margin:-6px 0 14px">Color del punto: verde riesgo bajo, amarillo medio, rojo alto.</p>
+ <p class="err" id="iErr"></p><button class="btn pri block">Guardar</button>${id?'<button type="button" class="btn block danger" data-del style="margin-top:10px">Eliminar inversión</button>':''}</form>`,el=>{
+  const g=$('[data-pick]',el);g.onclick=e=>{const c=e.target.closest('.chip');if(!c)return;v.type=c.dataset.v;$$('.chip',g).forEach(x=>x.setAttribute('aria-pressed',x===c))};
+  const f=$('form',el);f.onsubmit=e=>{e.preventDefault();const inv=num(f.elements.invested.value);const o={id:id||uid(),name:f.elements.name.value.trim().slice(0,40),type:v.type,start:f.elements.start.value||today(),invested:inv,current:num(f.elements.current.value)||inv};if(!o.name)return $('#iErr',el).textContent='Ponele un nombre.';if(!(inv>0))return $('#iErr',el).textContent='Ingresá cuánto invertiste.';const i=S.inv.findIndex(x=>x.id===o.id);if(i>=0)S.inv[i]=o;else S.inv.push(o);save();closeSheet();render();toast('Inversión guardada')};
+  const d=$('[data-del]',el);if(d)d.onclick=async()=>{if(await askConfirm({title:'¿Eliminar la inversión?',msg:v.name,ok:'Eliminar',danger:true})){S.inv=S.inv.filter(x=>x.id!==id);save();render()}}})}
+
+/* ---------- Ajustes ---------- */
+function renderSet(){const hasEx=S.tx.some(t=>t.ex)||S.inv.some(t=>t.ex);
+ return `<h1>Ajustes</h1><div class="grid"><div>
+ <section class="card"><h2>Cuenta</h2><p class="sub">Usuario: <b style="color:var(--ink)">${esc(S.user)}</b></p><div class="two"><label class="field"><span>Bloqueo automático</span><select class="in" data-set="lock">${[1,3,5,10,15].map(n=>`<option value="${n}" ${S.set.lock===n?'selected':''}>Después de ${n} min</option>`).join('')}</select></label><label class="field"><span>Inflación mensual esperada (%)</span><input class="in num" data-set="infl" inputmode="decimal" value="${esc(fmtIn(S.set.infl))}"></label></div><button class="btn block" data-act="pwOpen">Cambiar contraseña</button></section>
+ <section class="card"><h2>Copia de seguridad</h2><p class="sub">Tus datos viven solo en este navegador. Si borrás el historial o cambiás de celular, se pierden. La copia sale cifrada: sin tu contraseña no se puede leer.</p><div class="row2"><button class="btn" data-act="bkCopy">Copiar copia</button><button class="btn" data-act="bkDown">Descargar</button></div><button class="btn block" style="margin-top:10px" data-act="importOpen">Restaurar una copia</button><button class="btn block" style="margin-top:10px" data-act="csv">Copiar movimientos para Excel</button><p class="note">Lo copiado para Excel va sin cifrar: pegalo solo en tu compu.</p></section>
+ </div><div>
+ <section class="card"><h2>Cómo te protege iWon</h2><ul class="rec"><li><b>Cifrado AES-256-GCM</b>La clave sale de tu usuario y contraseña con PBKDF2 (600.000 vueltas de SHA-256). La contraseña no se guarda en ningún lado.</li><li><b>Sin servidores</b>Nada sale de tu dispositivo: no hay cuentas en la nube ni terceros.</li><li><b>Bloqueo automático</b>Por inactividad, o si salís de la app por más de un minuto.</li><li><b>Freno a intentos</b>Después de 5 contraseñas incorrectas, cada intento espera más.</li><li><b>Ocultar montos</b>Con el ojo de arriba, para mirar la app en público.</li></ul></section>
+ ${hasEx?'<section class="card"><h2>Datos de ejemplo</h2><p class="sub">Quita solo lo que cargó el ejemplo; lo tuyo queda.</p><button class="btn block" data-act="delEx">Quitar datos de ejemplo</button></section>':''}
+ <section class="card"><h2>Borrar todo</h2><p class="sub">Elimina la bóveda de este dispositivo. No se puede deshacer.</p><button class="btn block danger" data-act="wipe">Borrar todos mis datos</button></section>
+ </div></div>`}
+function openPw(){sheet(`<h3>Cambiar contraseña</h3><form autocomplete="off">${pwField('c','Contraseña actual','current-password','autofocus')}${pwField('p','Nueva contraseña','new-password')}<div class="meter" style="margin:-8px 0 4px"><i></i></div><p class="note" style="margin:0 0 14px"></p>${pwField('p2','Repetí la nueva','new-password')}<p class="err" id="pErr"></p><button class="btn pri block">Cambiar</button></form>`,el=>{const f=$('form',el),err=m=>$('#pErr',el).textContent=m;meter(f.elements.p,$('.meter',f),()=>S.user);
+ f.onsubmit=async e=>{e.preventDefault();const p=f.elements.p.value;if(p.length<8||strength(p,S.user)<3)return err('La nueva contraseña es muy débil.');if(p!==f.elements.p2.value)return err('Las contraseñas no coinciden.');const b=$('button.pri',f);b.disabled=true;b.textContent='Verificando…';
+  try{clearTimeout(saveT);await persist();await openVault(sget(VKEY),S.user,f.elements.c.value)}catch(x){b.disabled=false;b.textContent='Cambiar';return err('La contraseña actual no es correcta.')}
+  SALT=crypto.getRandomValues(new Uint8Array(16));KITER=ITER;KEY=await derive(S.user,p,SALT,ITER);await persist();closeSheet();toast('Contraseña cambiada. Hacé una copia de seguridad nueva.')}})}
+async function backupStr(){clearTimeout(saveT);await persist();return sget(VKEY)||(KEY?await seal():'')}
+function copyText(txt,okMsg){navigator.clipboard.writeText(txt).then(()=>toast(okMsg)).catch(()=>sheet(`<h3>Copialo a mano</h3><p class="sub">Tu navegador no dejó copiar automáticamente. Mantené apretado el texto y elegí Copiar.</p><textarea class="in" readonly>${esc(txt)}</textarea>`,el=>{const t=$('textarea',el);t.focus();t.select()}))}
+function openImport(){sheet(`<h3>Restaurar una copia</h3><p class="sub">Elegí el archivo de copia o pegá el texto. Va a reemplazar los datos de este dispositivo, y vas a entrar con el usuario y la contraseña de esa copia.</p><label class="field"><span>Archivo</span><input class="in" type="file" accept=".json,application/json,text/plain" id="imF"></label><label class="field"><span>O pegá el texto de la copia</span><textarea class="in" id="imT" spellcheck="false"></textarea></label><p class="err" id="imE"></p><button class="btn pri block" id="imB">Restaurar</button>`,el=>{
+ $('#imF',el).onchange=async e=>{const f=e.target.files[0];if(!f)return;if(f.size>20e6)return $('#imE',el).textContent='El archivo es demasiado grande.';$('#imT',el).value=await f.text()};
+ $('#imB',el).onclick=async()=>{const s=$('#imT',el).value.trim();let v;try{v=JSON.parse(s)}catch(x){}if(!v||v.app!=='iWon'||!v.ct||!v.salt||!v.iv||!v.iter)return $('#imE',el).textContent='Eso no parece una copia de iWon.';
+  if(sget(VKEY)&&!(await askConfirm({title:'¿Reemplazar los datos?',msg:'Lo que hay en este dispositivo se reemplaza por la copia.',ok:'Reemplazar',danger:true})))return;
+  sset(VKEY,JSON.stringify(v));sdel(GKEY);KEY=null;S=null;closeSheet();clearInterval(idleT);$('#view').innerHTML='';showLock();toast('Copia restaurada. Entrá con los datos de esa copia.')}})}
+function csv(){const q=v=>{let s=String(v??'');if(/^[=+\-@\t\r]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};const rows=[['Fecha','Tipo','Categoría','Detalle','Productos','Proyecto','Medio','Monto']];
+ [...S.tx].sort((a,b)=>a.date.localeCompare(b.date)).forEach(t=>{const g=t.kind==='gasto';rows.push([t.date,g?'Gasto':'Ingreso',g?catOf(t.cat).label:incOf(t.src).label,t.mode==='detalle'?t.store:t.note,(t.items||[]).map(i=>`${i.n} x${i.q} a ${i.p}`).join(' | '),t.proj,t.method||'',(g?-t.amount:t.amount).toFixed(2).replace('.',',')])});
+ return rows.map(r=>r.map(q).join(';')).join('\r\n')}
+async function wipe(){if(!(await askConfirm({title:'¿Borrar todos tus datos?',msg:'Se elimina la bóveda de este dispositivo. Si no tenés copia de seguridad, se pierde para siempre.',ok:'Borrar todo',danger:true,typed:'BORRAR'})))return;sdel(VKEY);sdel(GKEY);KEY=null;S=null;clearInterval(idleT);$('#view').innerHTML='';showLock();toast('Datos borrados')}
+
+/* ---------- ejemplo ---------- */
+function sample(){const cur=mk(today()),ms=[addM(cur,-2),addM(cur,-1),cur],td0=+today().slice(8),now=Date.now();let n=0;
+ const T=(kind,o)=>({id:uid(),kind,mode:'rapido',created:now+(n++),ex:true,method:'',proj:'',note:'',...o});
+ ms.forEach((m,i)=>{const dd=x=>m+'-'+String(m===cur?Math.min(x,td0):x).padStart(2,'0');
+  S.tx.push(T('ingreso',{src:'sueldo',amount:2650000,date:dd(1),note:'Sueldo',proj:'Trabajo principal'}),T('ingreso',{src:'extra',amount:180000+i*45000,date:dd(14),note:'Changa de mantenimiento',proj:'Changas'}),
+  T('gasto',{cat:'hogar',amount:520000,date:dd(5),note:'Alquiler',method:'Transferencia'}),T('gasto',{cat:'servicios',amount:98000+i*4000,date:dd(8),note:'Luz, gas e internet',method:'Débito'}),T('gasto',{cat:'transporte',amount:85000+i*6000,date:dd(10),note:'Nafta',method:'Crédito'}),T('gasto',{cat:'comida',amount:42000,date:dd(16),note:'Pizza del viernes',method:'Billetera virtual'}),T('gasto',{cat:'trabajo',amount:65000,date:dd(12),note:'Materiales para changa',method:'Transferencia',proj:'Changas'}),T('gasto',{cat:'ocio',amount:30000,date:dd(18),note:'Cine',method:'Crédito'}));
+  const items=[['Aceite girasol 1,5 L',2,3200],['Fideos 500 g',10,950],['Arroz 1 kg',4,1400],['Yerba 1 kg',3,4800],['Leche 1 L',12,1350],['Papel higiénico x12',2,6900],['Detergente 750 ml',2,2700]].map(([n,q,p])=>({n,q,p:p*(1+i*.03)}));
+  S.tx.push(T('gasto',{mode:'detalle',cat:'mayorista',store:'Mayorista',method:'Débito',date:dd(3),items,amount:Math.round(items.reduce((s,x)=>s+x.q*x.p,0)*100)/100}))});
+ const back=d=>{const x=new Date();x.setDate(x.getDate()-d);return x.toLocaleDateString('sv')};
+ S.inv.push({id:uid(),ex:true,name:'Cuenta remunerada',type:'billetera',start:back(90),invested:500000,current:530500},{id:uid(),ex:true,name:'Plazo fijo 30 días',type:'pf',start:back(25),invested:800000,current:813700},{id:uid(),ex:true,name:'CEDEAR SPY',type:'cedear',start:back(120),invested:300000,current:322000},{id:uid(),ex:true,name:'Bitcoin',type:'cripto',start:back(60),invested:150000,current:131000});
+ S.set.proj.monthly=null;save();render();toast('Datos de ejemplo cargados')}
+
+/* ---------- acciones ---------- */
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.id;
+ if(a==='importOpen')return openImport();
+ if(a==='forgot'){if(await askConfirm({title:'Olvidé la contraseña',msg:'Tus datos están cifrados con ella y no hay forma de recuperarla. Podés restaurar una copia de seguridad o borrar todo y empezar de nuevo.',ok:'Borrar y empezar',danger:true,typed:'BORRAR'})){sdel(VKEY);sdel(GKEY);showLock()}return}
+ if(!S)return;
+ switch(a){
+ case 'mPrev':month=addM(month,-1);render();break;
+ case 'mNext':if(month<mk(today())){month=addM(month,1);render()}break;
+ case 'add':openTx();break;
+ case 'addInc':openTx({kind:'ingreso'});break;
+ case 'editTx':openTx({id});break;
+ case 'filter':txFilter=b.dataset.v;render();break;
+ case 'sample':sample();break;
+ case 'lockNow':lock();break;
+ case 'hide':S.set.hide=!S.set.hide;save();render();break;
+ case 'goalNew':openGoal();break;case 'goalEdit':openGoal(id);break;case 'goalAdd':goalAdd(id);break;
+ case 'invNew':openInv();break;case 'invEdit':openInv(id);break;
+ case 'risk':S.set.risk=b.dataset.v;save();render();break;
+ case 'cmpDays':S.set.cmp.days=+b.dataset.v;save();render();break;
+ case 'pwOpen':openPw();break;
+ case 'bkCopy':copyText(await backupStr(),'Copia cifrada copiada. Guardala en un lugar seguro.');break;
+ case 'bkDown':{const s=await backupStr();try{const u=URL.createObjectURL(new Blob([s],{type:'application/json'}));const l=document.createElement('a');l.href=u;l.download=`iwon-copia-${today()}.json`;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast('Si no se descarga, usá Copiar copia')}catch(x){toast('Usá Copiar copia')}break}
+ case 'csv':copyText(csv(),'Movimientos copiados. Pegalos en Excel o Sheets.');break;
+ case 'delEx':S.tx=S.tx.filter(t=>!t.ex);S.inv=S.inv.filter(t=>!t.ex);S.set.proj.monthly=null;save();render();toast('Ejemplos quitados');break;
+ case 'wipe':wipe();break}});
+document.addEventListener('change',e=>{const k=e.target.dataset&&e.target.dataset.set;if(!k||!S)return;if(k==='lock')S.set.lock=+e.target.value;if(k==='infl')S.set.infl=clamp(num(e.target.value),0,100);save();toast('Guardado')});
+
+/* ---------- inicio ---------- */
+$$('[data-ic]').forEach(e=>e.outerHTML=ic(e.dataset.ic));
+window.__noStore=!sset('iwon.test','1');sdel('iwon.test');
+showLock();
+}
+</script>
+</body>
+</html>
