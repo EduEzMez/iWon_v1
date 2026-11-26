@@ -7,6 +7,13 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#0d1014">
 <title>iWon</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="iWon">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -507,10 +514,12 @@ function renderSet(){const hasEx=S.tx.some(t=>t.ex)||S.inv.some(t=>t.ex);
  <section class="card"><h2>Cuenta</h2><p class="sub">Usuario: <b style="color:var(--ink)">${esc(S.user)}</b></p><div class="two"><label class="field"><span>Bloqueo automático</span><select class="in" data-set="lock">${[1,3,5,10,15].map(n=>`<option value="${n}" ${S.set.lock===n?'selected':''}>Después de ${n} min</option>`).join('')}</select></label><label class="field"><span>Inflación mensual esperada (%)</span><input class="in num" data-set="infl" inputmode="decimal" value="${esc(fmtIn(S.set.infl))}"></label></div><button class="btn block" data-act="pwOpen">Cambiar contraseña</button></section>
  <section class="card"><h2>Copia de seguridad</h2><p class="sub">Tus datos viven solo en este navegador. Si borrás el historial o cambiás de celular, se pierden. La copia sale cifrada: sin tu contraseña no se puede leer.</p><div class="row2"><button class="btn" data-act="bkCopy">Copiar copia</button><button class="btn" data-act="bkDown">Descargar</button></div><button class="btn block" style="margin-top:10px" data-act="importOpen">Restaurar una copia</button><button class="btn block" style="margin-top:10px" data-act="csv">Copiar movimientos para Excel</button><p class="note">Lo copiado para Excel va sin cifrar: pegalo solo en tu compu.</p></section>
  </div><div>
- <section class="card"><h2>Cómo te protege iWon</h2><ul class="rec"><li><b>Cifrado AES-256-GCM</b>La clave sale de tu usuario y contraseña con PBKDF2 (600.000 vueltas de SHA-256). La contraseña no se guarda en ningún lado.</li><li><b>Sin servidores</b>Nada sale de tu dispositivo: no hay cuentas en la nube ni terceros.</li><li><b>Bloqueo automático</b>Por inactividad, o si salís de la app por más de un minuto.</li><li><b>Freno a intentos</b>Después de 5 contraseñas incorrectas, cada intento espera más.</li><li><b>Ocultar montos</b>Con el ojo de arriba, para mirar la app en público.</li></ul></section>
+ ${installCard()}<section class="card"><h2>Cómo te protege iWon</h2><ul class="rec"><li><b>Cifrado AES-256-GCM</b>La clave sale de tu usuario y contraseña con PBKDF2 (600.000 vueltas de SHA-256). La contraseña no se guarda en ningún lado.</li><li><b>Sin servidores</b>Nada sale de tu dispositivo: no hay cuentas en la nube ni terceros.</li><li><b>Bloqueo automático</b>Por inactividad, o si salís de la app por más de un minuto.</li><li><b>Freno a intentos</b>Después de 5 contraseñas incorrectas, cada intento espera más.</li><li><b>Ocultar montos</b>Con el ojo de arriba, para mirar la app en público.</li></ul></section>
  ${hasEx?'<section class="card"><h2>Datos de ejemplo</h2><p class="sub">Quita solo lo que cargó el ejemplo; lo tuyo queda.</p><button class="btn block" data-act="delEx">Quitar datos de ejemplo</button></section>':''}
  <section class="card"><h2>Borrar todo</h2><p class="sub">Elimina la bóveda de este dispositivo. No se puede deshacer.</p><button class="btn block danger" data-act="wipe">Borrar todos mis datos</button></section>
  </div></div>`}
+function installCard(){if(isStandalone())return '';const how=installEvt?'<button class="btn pri block" data-act="install">Instalar iWon</button>':isIOS?'<ol class="rec" style="list-style:none"><li><b>1. Abrila en Safari</b>Desde la dirección de tu sitio, no desde otra app.</li><li><b>2. Tocá Compartir</b>El cuadrado con la flecha hacia arriba.</li><li><b>3. Agregar a inicio</b>Te queda el ícono celeste en la pantalla.</li></ol>':'<ol class="rec" style="list-style:none"><li><b>1. Abrila en Chrome</b>Desde la dirección de tu sitio.</li><li><b>2. Menú ⋮</b>Arriba a la derecha.</li><li><b>3. Instalar app</b>O «Agregar a la pantalla principal».</li></ol>';
+ return `<section class="card"><h2>Instalar en el celular</h2><p class="sub">Queda como una app más, con su ícono, a pantalla completa y funciona sin conexión.</p>${how}<p class="note">Ojo: en iPhone la app instalada tiene su propio almacenamiento. Si ya cargaste datos en el navegador, hacé una copia de seguridad y restaurala dentro de la app.</p></section>`}
 function openPw(){sheet(`<h3>Cambiar contraseña</h3><form autocomplete="off">${pwField('c','Contraseña actual','current-password','autofocus')}${pwField('p','Nueva contraseña','new-password')}<div class="meter" style="margin:-8px 0 4px"><i></i></div><p class="note" style="margin:0 0 14px"></p>${pwField('p2','Repetí la nueva','new-password')}<p class="err" id="pErr"></p><button class="btn pri block">Cambiar</button></form>`,el=>{const f=$('form',el),err=m=>$('#pErr',el).textContent=m;meter(f.elements.p,$('.meter',f),()=>S.user);
  f.onsubmit=async e=>{e.preventDefault();const p=f.elements.p.value;if(p.length<8||strength(p,S.user)<3)return err('La nueva contraseña es muy débil.');if(p!==f.elements.p2.value)return err('Las contraseñas no coinciden.');const b=$('button.pri',f);b.disabled=true;b.textContent='Verificando…';
   try{clearTimeout(saveT);await persist();await openVault(sget(VKEY),S.user,f.elements.c.value)}catch(x){b.disabled=false;b.textContent='Cambiar';return err('La contraseña actual no es correcta.')}
@@ -563,8 +572,17 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]
  case 'bkDown':{const s=await backupStr();try{const u=URL.createObjectURL(new Blob([s],{type:'application/json'}));const l=document.createElement('a');l.href=u;l.download=`iwon-copia-${today()}.json`;document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),2000);toast('Si no se descarga, usá Copiar copia')}catch(x){toast('Usá Copiar copia')}break}
  case 'csv':copyText(csv(),'Movimientos copiados. Pegalos en Excel o Sheets.');break;
  case 'delEx':S.tx=S.tx.filter(t=>!t.ex);S.inv=S.inv.filter(t=>!t.ex);S.set.proj.monthly=null;save();render();toast('Ejemplos quitados');break;
+ case 'install':if(installEvt){installEvt.prompt();try{await installEvt.userChoice}catch(x){}installEvt=null;render()}break;
  case 'wipe':wipe();break}});
 document.addEventListener('change',e=>{const k=e.target.dataset&&e.target.dataset.set;if(!k||!S)return;if(k==='lock')S.set.lock=+e.target.value;if(k==='infl')S.set.infl=clamp(num(e.target.value),0,100);save();toast('Guardado')});
+
+/* ---------- instalación (PWA) ---------- */
+let installEvt=null;
+const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(S&&view==='ajustes')render()});
+addEventListener('appinstalled',()=>{installEvt=null;toast('iWon quedó instalada en tu celular');if(S&&view==='ajustes')render()});
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){try{navigator.serviceWorker.register('sw.js').catch(()=>{})}catch(x){}}
 
 /* ---------- inicio ---------- */
 $$('[data-ic]').forEach(e=>e.outerHTML=ic(e.dataset.ic));
